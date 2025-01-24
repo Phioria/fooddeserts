@@ -4,22 +4,21 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of fooddeserts is to ...
+This package contains data from the USDA about food deserts in the United States. A food desert, in this context is defined as being a census tract where a significant number (at least 500 people) or share (at least 33 percent) of the population is greater than one-half mile from the nearest supermarket, supercenter, or large grocery store for and urban area or greater than 10 miles for a rural area.
+
+The goal of this package is to provide visualization tools to explore existing food deserts in the United States and the relationships they have to both demographics and health outcomes.
+
+## Data Source
+
+Data for this package is publicly available in the Food Access Research Atlas at: [https://catalog.data.gov/dataset/food-access-research-atlas](https://catalog.data.gov/dataset/food-access-research-atlas) 
+
 
 ## Installation
 
-You can install the development version of fooddeserts like so:
+The package is currently in development, but if you wish you can install it with the use of devtools.
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+devtools::install_github("Phioria/fooddeserts")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(fooddeserts)
-## basic example code
-```
 
