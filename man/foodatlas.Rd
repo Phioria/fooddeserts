@@ -9,31 +9,31 @@
 
 A data frame with 72,531 rows and 25 columns
 \describe{
-\item{CensusTract}{Census tract number}
-\item{State}{State name}
-\item{County}{County name}
-\item{Urban}{Flag for urban tract}
-\item{Pop2010}{Population count from 2010 census}
-\item{OHU2010}{Occupied housing unit count from 2010 census}
-\item{GroupQuartersFlag}{Flag for tract where >=67\%}
-\item{NUMGQTRS}{Count of tract population residing in group quarters}
-\item{PCTGQTRS}{Percent of tract population residing in group quarters}
-\item{LILATracts_1And10}{Flag for low-income and low access when considering low accessibilty at 1 and 10 miles}
-\item{LILATracts_halfAnd10}{Flag for low-income and low access when considering low accessibilty at 1/2 and 10 miles}
-\item{LILATracts_1And20}{Flag for low-income and low access when considering low accessibilty at 1 and 20 miles}
-\item{LilaTracts_Vehicle}{Flag for low-income and low access when considering vehicle access or at 20 miles}
-\item{HUNVFlag}{Flag for tract where >= 100 of households do not have a vehicle, and beyond 1/2 mile from supermarket}
-\item{LowIncomeTracts}{Flag for low income tract}
-\item{PovertyRate}{Share of the tract population living with income at or below the Federal poverty thresholds for family size}
-\item{MedianFamilyIncome}{Tract median family income}
-\item{LA1and10}{Flag for low access tract at 1 mile for urban areas or 10 miles for rural areas}
-\item{LAhalfand10}{Flag for low access tract at 1/2 mile for urban areas or 10 miles for rural areas}
-\item{LA1and20}{Flag for low access tract at 1 mile for urban areas or 20 miles for rural areas}
-\item{LATracts_half}{Flag for low access tract when considering 1/2 mile distance}
-\item{LATracts1}{Flag for low access tract when considering 1 mile distance}
-\item{LATracts10}{Flag for low access tract when considering 10 mile distance}
-\item{LATracts20}{Flag for low access tract when considering 20 mile distance}
-\item{LATractsVehicle_20}{Flag for tract where >= 100 of households do not have a vehicle, and beyond 1/2 mile from supermarket; or >= 500 individuals are beyond 20 miles from supermarket ; or >= 33\% of individuals are beyond 20 miles from supermarket}
+\item{census_tract}{Census tract number}
+\item{state}{State name}
+\item{county}{County name}
+\item{urban_flag}{Flag for urban tract}
+\item{pop2010}{Population count from 2010 census}
+\item{ohu2010}{Occupied housing unit count from 2010 census}
+\item{group_quarters_flag}{Flag for tract where >=67\%}
+\item{num_in_group_quarters}{Count of tract population residing in group quarters}
+\item{pct_in_group_quarters}{Percent of tract population residing in group quarters}
+\item{li_la_1_10}{Flag for low-income and low access when considering low accessibilty at 1 and 10 miles}
+\item{li_la_half_10}{Flag for low-income and low access when considering low accessibilty at 1/2 and 10 miles}
+\item{li_la_1_20}{Flag for low-income and low access when considering low accessibilty at 1 and 20 miles}
+\item{li_la_vehicle}{Flag for low-income and low access when considering vehicle access or at 20 miles}
+\item{la_lva_flag}{Flag for tract where >= 100 of households do not have a vehicle, and beyond 1/2 mile from supermarket}
+\item{low_income_tracts}{Flag for low income tract}
+\item{poverty_rate}{Share of the tract population living with income at or below the Federal poverty thresholds for family size}
+\item{median_family_income}{Tract median family income}
+\item{la_1_10}{Flag for low access tract at 1 mile for urban areas or 10 miles for rural areas}
+\item{la_half_10}{Flag for low access tract at 1/2 mile for urban areas or 10 miles for rural areas}
+\item{la_1_20}{Flag for low access tract at 1 mile for urban areas or 20 miles for rural areas}
+\item{la_tracts_half}{Flag for low access tract when considering 1/2 mile distance}
+\item{la_tracts_1}{Flag for low access tract when considering 1 mile distance}
+\item{la_tracts_10}{Flag for low access tract when considering 10 mile distance}
+\item{la_tracts_20}{Flag for low access tract when considering 20 mile distance}
+\item{la_tracts_vehicle_20}{Flag for tract where >= 100 of households do not have a vehicle, and beyond 1/2 mile from supermarket; or >= 500 individuals are beyond 20 miles from supermarket ; or >= 33\% of individuals are beyond 20 miles from supermarket}
 }
 }
 }
