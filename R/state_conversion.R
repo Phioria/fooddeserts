@@ -16,7 +16,6 @@
 #' abb <- "AZ"
 #' state <- abb_to_state(abb) # "Arizona"
 #'
-#' @export
 state_to_abb <- function(state) {
   vec_idx <- which(c(state.name, "District of Columbia") == state)
   abbr <- c(state.abb, "DC")[vec_idx]
@@ -39,7 +38,6 @@ state_to_abb <- function(state) {
 #' abb <- "NY"
 #' state <- abb_to_state(abb) # New York
 #'
-#' @export
 abb_to_state <- function(abb) {
   vec_idx <- which(c(state.abb, "DC") == abb)
   state <- c(state.name, "District of Columbia")[vec_idx]
@@ -63,7 +61,6 @@ abb_to_state <- function(abb) {
 #' # Returns FALSE, as it is not capitalized
 #' is_state_name("minnesota")
 #'
-#' @export
 is_state_name <- function(state) {
   return(state %in% c(state.name, "District of Columbia"))
 }
@@ -85,7 +82,6 @@ is_state_name <- function(state) {
 #' # Returns FALSE, as it is not capitalized
 #' is_state_abb("tx")
 #'
-#' @export
 is_state_abb <- function(abb) {
   return(abb %in% c(state.abb, "DC"))
 }
