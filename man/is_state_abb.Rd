@@ -16,14 +16,3 @@ FALSE if it is not
 \description{
 Is this a State Abbreviation?
 }
-\examples{
-# Returns TRUE
-is_state_abb("TX")
-
-# Returns FALSE
-is_state_abb("TRX")
-
-# Returns FALSE, as it is not capitalized
-is_state_abb("tx")
-
-}

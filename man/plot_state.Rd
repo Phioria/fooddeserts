@@ -41,6 +41,6 @@ Currently the only plot feature options are "lila" and "la" which refer to
 
 plot_state(data = foodatlas, state = "NY", feature = "lila")
 
-plot_state(foodatlas, "GA")
+plot_state(foodatlas, "Georgia")
 
 }

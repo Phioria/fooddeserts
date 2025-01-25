@@ -21,11 +21,13 @@
 #'
 #' plot_state(data = foodatlas, state = "NY", feature = "lila")
 #'
-#' plot_state(foodatlas, "GA")
+#' plot_state(foodatlas, "Georgia")
 #'
 plot_state <- function(data, state, feature = c("lila", "la"),
                        title = NULL, subtitle = NULL, caption = NULL,
                        pal = c("YlOrRd", "Red-Yellow", "BluYl")) {
+  # Bind data frame column names that R is complaining about
+  county <- pop2010 <- la_half_10 <- li_la_half_10 <- la_county_pop <- county_pop <- li_la_county_pop <- NULL
 
   if (missing(data)) stop("Argument `data` is required.")
   if (missing(state)) stop("Argument `state` is required.")
@@ -134,8 +136,8 @@ is_plottable <- function(data, state, feature) {
 }
 
 is_valid_state <- function(s) {
-  valid_state_names <- c(state.name, "District of Columbia")
-  valid_state_abb <- c(state.abb, "DC")
+  valid_state_names <- c(datasets::state.name, "District of Columbia")
+  valid_state_abb <- c(datasets::state.abb, "DC")
   if (s %in% valid_state_names == FALSE && s %in% valid_state_abb == FALSE) {
     warning(paste0("Supplied state: '", s, "' is not valid"))
     return(FALSE)

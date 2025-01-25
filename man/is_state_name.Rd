@@ -16,14 +16,3 @@ FALSE if it is not
 \description{
 Is this a State Name?
 }
-\examples{
-# Returns TRUE
-is_state_name("Minnesota")
-
-# Returns FALSE
-is_state_name("Minesota")
-
-# Returns FALSE, as it is not capitalized
-is_state_name("minnesota")
-
-}
