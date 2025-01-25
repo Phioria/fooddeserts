@@ -1,6 +1,6 @@
 Package: fooddeserts
 Title: Food Deserts
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: 
     person("Chris", "Baugh", , "chris.baugh@gmail.com", role = c("aut", "cre"))
 Description: The goal of this package is to provide visualization tools to explore
