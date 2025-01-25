@@ -1,0 +1,35 @@
+#' USDA Food Access Research Atlas
+#'
+#' A subset of data from the USDA's Food Access Research Atlas dataset
+#'
+#' @format ## `foodatlas`
+#' A data frame with 72,531 rows and 25 columns
+#' \describe{
+#'   \item{CensusTract}{Census tract number}
+#'   \item{State}{State name}
+#'   \item{County}{County name}
+#'   \item{Urban}{Flag for urban tract}
+#'   \item{Pop2010}{Population count from 2010 census}
+#'   \item{OHU2010}{Occupied housing unit count from 2010 census}
+#'   \item{GroupQuartersFlag}{Flag for tract where >=67%}
+#'   \item{NUMGQTRS}{Count of tract population residing in group quarters}
+#'   \item{PCTGQTRS}{Percent of tract population residing in group quarters}
+#'   \item{LILATracts_1And10}{Flag for low-income and low access when considering low accessibilty at 1 and 10 miles}
+#'   \item{LILATracts_halfAnd10}{Flag for low-income and low access when considering low accessibilty at 1/2 and 10 miles}
+#'   \item{LILATracts_1And20}{Flag for low-income and low access when considering low accessibilty at 1 and 20 miles}
+#'   \item{LilaTracts_Vehicle}{Flag for low-income and low access when considering vehicle access or at 20 miles}
+#'   \item{HUNVFlag}{Flag for tract where >= 100 of households do not have a vehicle, and beyond 1/2 mile from supermarket}
+#'   \item{LowIncomeTracts}{Flag for low income tract}
+#'   \item{PovertyRate}{Share of the tract population living with income at or below the Federal poverty thresholds for family size}
+#'   \item{MedianFamilyIncome}{Tract median family income}
+#'   \item{LA1and10}{Flag for low access tract at 1 mile for urban areas or 10 miles for rural areas}
+#'   \item{LAhalfand10}{Flag for low access tract at 1/2 mile for urban areas or 10 miles for rural areas}
+#'   \item{LA1and20}{Flag for low access tract at 1 mile for urban areas or 20 miles for rural areas}
+#'   \item{LATracts_half}{Flag for low access tract when considering 1/2 mile distance}
+#'   \item{LATracts1}{Flag for low access tract when considering 1 mile distance}
+#'   \item{LATracts10}{Flag for low access tract when considering 10 mile distance}
+#'   \item{LATracts20}{Flag for low access tract when considering 20 mile distance}
+#'   \item{LATractsVehicle_20}{Flag for tract where >= 100 of households do not have a vehicle, and beyond 1/2 mile from supermarket; or >= 500 individuals are beyond 20 miles from supermarket ; or >= 33% of individuals are beyond 20 miles from supermarket}
+#' }
+#' @source <https://www.ers.usda.gov/data-products/food-access-research-atlas/download-the-data>
+"foodatlas"

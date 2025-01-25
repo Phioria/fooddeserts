@@ -2,7 +2,7 @@ Package: fooddeserts
 Title: Food Deserts
 Version: 0.0.0.9001
 Authors@R: 
-    person("Chris"", "Baugh"", , "chris.baugh@gmail.com"", role = c("aut", "cre"))
+    person("Chris", "Baugh", , "chris.baugh@gmail.com", role = c("aut", "cre"))
 Description: The goal of this package is to provide visualization tools to explore
     existing food deserts in the United States and the relationships they have to
     both demographics and health outcomes.
@@ -11,4 +11,10 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
-    magrittr
+    dplyr,
+    ggplot2,
+    magrittr,
+    usmap
+Depends: 
+    R (>= 2.10)
+LazyData: true
