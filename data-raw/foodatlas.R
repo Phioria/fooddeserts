@@ -35,10 +35,24 @@ new_colnames <- c("census_tract", "state", "county", "urban_flag", "pop2010",
 
 colnames(foodatlas) <- new_colnames
 
-foodatlas <- foodatlas %>%
-  dplyr::mutate_at(c("urban_flag", "group_quarters_flag", "li_la_1_10", "li_la_half_10",
-                     "li_la_1_20", "li_la_vehicle", "la_lva_flag", "low_income_tracts",
-                     "la_1_10", "la_half_10", "la_1_20", "la_tracts_half", "la_tracts_1",
-                     "la_tracts_10", "la_tracts_20", "la_tracts_vehicle_20"), as.factor)
+# Convert Connecticut county names to work with usmapdata/usmap
+foodatlas_only_ct <- foodatlas %>%
+  dplyr::filter(state == "Connecticut")
+
+ct_tracts <- foodatlas_only_ct$census_tract
+
+# Couldn't do a simple name swap.
+# New counties have different shapes encapsulating different census tracts.
+# Iterate through each census tract and change them to the new associated county.
+for (tract in ct_tracts) {
+  tract_idx <- which(ct_data$census_tract == tract)
+  new_county <- ct_data$new_county[tract_idx]
+  tgt_idx <- which(foodatlas$census_tract == tract)
+  foodatlas$county[tgt_idx] <- new_county
+}
+
+# Clean up, Clean up
+rm(lcl, src, atl, os, d_mode, raw_data, new_colnames, foodatlas_only_ct,
+   ct_tracts, tract, tract_idx, new_county, tgt_idx)
 
 usethis::use_data(foodatlas, overwrite = TRUE)
