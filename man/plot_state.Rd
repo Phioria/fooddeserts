@@ -8,6 +8,7 @@ plot_state(
   data,
   state,
   feature = c("lila", "la"),
+  sensitivity = c("low", "medium", "high"),
   title = NULL,
   subtitle = NULL,
   caption = NULL,
@@ -20,6 +21,8 @@ plot_state(
 \item{state}{character - The state to plot given in the format "NY" or "New York"}
 
 \item{feature}{character - The feature to plot, either "lila" or "la"}
+
+\item{sensitivity}{character - How strict should the plot be about what constitutes a low income or low access area? "low", "medium" or "high"}
 
 \item{title}{character - An optional title for the plot}
 
@@ -39,7 +42,7 @@ Currently the only plot feature options are "lila" and "la" which refer to
 }
 \examples{
 
-plot_state(data = foodatlas, state = "NY", feature = "lila")
+plot_state(data = foodatlas, state = "NY", feature = "lila", sensitivity = "medium")
 
 plot_state(foodatlas, "Georgia")
 

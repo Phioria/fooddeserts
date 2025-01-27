@@ -9,6 +9,7 @@
 #' @param data data frame - The foodatlas dataset
 #' @param state character - The state to plot given in the format "NY" or "New York"
 #' @param feature character - The feature to plot, either "lila" or "la"
+#' @param sensitivity character - How strict should the plot be about what constitutes a low income or low access area? "low", "medium" or "high"
 #' @param title character - An optional title for the plot
 #' @param subtitle character - An optional subtitle for the plot
 #' @param caption character - An optional caption for the plot
@@ -19,26 +20,36 @@
 #'
 #' @examples
 #'
-#' plot_state(data = foodatlas, state = "NY", feature = "lila")
+#' plot_state(data = foodatlas, state = "NY", feature = "lila", sensitivity = "medium")
 #'
 #' plot_state(foodatlas, "Georgia")
 #'
-plot_state <- function(data, state, feature = c("lila", "la"),
+plot_state <- function(data, state, feature = c("lila", "la"), sensitivity = c("low", "medium", "high"),
                        title = NULL, subtitle = NULL, caption = NULL,
                        pal = c("YlOrRd", "Red-Yellow", "BluYl")) {
   # Bind data frame column names that R is complaining about
   county <- pop2010 <- la_half_10 <- li_la_half_10 <- la_county_pop <- county_pop <- li_la_county_pop <- NULL
 
+
   if (missing(data)) stop("Argument `data` is required.")
   if (missing(state)) stop("Argument `state` is required.")
 
+  # Least to most sensitive
+  lila_vals <- c("li_la_1_20", "li_la_1_10", "li_la_half_10")
+  la_vals <- c("la_1_20", "la_1_10", "la_half_10")
+
   feature <- match.arg(feature)
+  sensitivity <- match.arg(sensitivity)
+
+  sensitivity <- switch(sensitivity,
+                        "low" = 1,
+                        "medium" = 2,
+                        "high" = 3)
+
   feature_val <- switch(feature,
-                        "lila" = "li_la_half_10",
-                        "la" = "la_half_10")
-  feature_plot <- switch(feature,
-                         "lila" = "li_la_tract_percent",
-                         "la" = "la_tract_percent")
+                        "lila" = lila_vals[sensitivity],
+                        "la" = la_vals[sensitivity])
+  feature_plot <- "feature_percent"
 
   pal <- match.arg(pal)
 
@@ -87,21 +98,14 @@ plot_state <- function(data, state, feature = c("lila", "la"),
 
   fill_str <- "Share of Tracts"
 
-  # filter doesn't play nice with column and variable names being the same
-  f_state <- state
-
   #### Summarize data ####
   subset_df <- data %>%
-    dplyr::filter(state == f_state) %>%
+    dplyr::filter(state == {{ state }}) %>%
     dplyr::group_by(county) %>%
     dplyr::summarize(county_tracts = dplyr::n(),
-                     county_la_tracts = sum(la_half_10),
-                     county_li_la_tracts = sum(li_la_half_10)) %>%
-    dplyr::mutate(la_tract_percent = round(county_la_tracts / county_tracts, digits = 4) * 100,
-                  li_la_tract_percent = round(county_li_la_tracts / county_tracts, digits = 4) * 100) %>%
-    dplyr::mutate(fips = usmap::fips(f_state, county))
-
-
+                     feature_tracts = sum(.data[[feature_val]])) %>%
+    dplyr::mutate(feature_percent = round(feature_tracts / county_tracts, digits = 4) * 100) %>%
+    dplyr::mutate(fips = usmap::fips({{ state }}, county))
 
   #### Generate plot ####
   p <- usmap::plot_usmap(regions = c("counties"),
@@ -120,13 +124,7 @@ plot_state <- function(data, state, feature = c("lila", "la"),
   return(p)
 }
 
-    ggplot2::labs(title = title, subtitle = subtitle, caption = caption) +
-    ggplot2::theme(plot.title = ggplot2::element_text(size = 14),
-                   plot.subtitle = ggplot2::element_text(size = 10),
-                   legend.position = "right")
 
-  return(p)
-}
 
 is_state_present <- function(df, s) {
   # Check if given state is in the data
@@ -134,7 +132,6 @@ is_state_present <- function(df, s) {
   return(s %in% df$state)
 }
 
-is_plottable <- function(data, state, feature) {
 is_plottable <- function(data, state = NULL, feature, detail = c("state_by_county", "us_by_county", "us_by_state")) {
   plottable <- TRUE
 
@@ -196,3 +193,37 @@ is_valid_df <- function(df, feature) {
 
   return(valid_df)
 }
+
+get_la_lower_bound <- function(pop, flag_status) {
+  # At least 500 or at least 0.33
+  # This is so flexible as to be meaningless
+  if (!flag_status) {
+    return(0)
+  }
+  if (pop > 500) {
+    return(500)
+  } else {
+    # Using ceiling for census tracts that are considered low access but only have a population of 1 and wouldn't be counted otherwise
+    return(ceiling(pop * 0.33))
+  }
+}
+
+get_la_lower <- Vectorize(get_la_lower_bound)
+
+
+get_la_upper_bound <- function(pop, flag_status) {
+  if (!flag_status) {
+    return(0)
+  } else {
+    return(pop)
+  }
+}
+
+get_la_upper <- Vectorize(get_la_upper_bound)
+
+
+
+
+
+
+
