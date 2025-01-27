@@ -37,8 +37,8 @@ plot_state <- function(data, state, feature = c("lila", "la"),
                         "lila" = "li_la_half_10",
                         "la" = "la_half_10")
   feature_plot <- switch(feature,
-                         "lila" = "li_la_county_percent",
-                         "la" = "la_county_percent")
+                         "lila" = "li_la_tract_percent",
+                         "la" = "la_tract_percent")
 
   pal <- match.arg(pal)
 
@@ -61,7 +61,7 @@ plot_state <- function(data, state, feature = c("lila", "la"),
   #### Generate plot text ####
   # Set title to default if not provided
   if (is.null(title)) {
-    title_pre <- paste("Percentage of", state, "population with")
+    title_pre <- paste("Share of", state, "tracts per county with")
     title_mid <- switch(feature,
                          "la" = "low access",
                          "lila" = "low income and low access")
@@ -85,6 +85,8 @@ plot_state <- function(data, state, feature = c("lila", "la"),
     stopifnot("`caption` must be of type character or left blank." = is.character(caption))
   }
 
+  fill_str <- "Share of Tracts"
+
   # filter doesn't play nice with column and variable names being the same
   f_state <- state
 
@@ -92,12 +94,14 @@ plot_state <- function(data, state, feature = c("lila", "la"),
   subset_df <- data %>%
     dplyr::filter(state == f_state) %>%
     dplyr::group_by(county) %>%
-    dplyr::summarize(county_pop = sum(pop2010),
-                     la_county_pop = sum(pop2010 * la_half_10),
-                     li_la_county_pop = sum(pop2010 * li_la_half_10)) %>%
-    dplyr::mutate(la_county_percent = round(la_county_pop / county_pop, digits = 4) * 100,
-                  li_la_county_percent = round(li_la_county_pop / county_pop, digits = 4) * 100) %>%
+    dplyr::summarize(county_tracts = dplyr::n(),
+                     county_la_tracts = sum(la_half_10),
+                     county_li_la_tracts = sum(li_la_half_10)) %>%
+    dplyr::mutate(la_tract_percent = round(county_la_tracts / county_tracts, digits = 4) * 100,
+                  li_la_tract_percent = round(county_li_la_tracts / county_tracts, digits = 4) * 100) %>%
     dplyr::mutate(fips = usmap::fips(f_state, county))
+
+
 
   #### Generate plot ####
   p <- usmap::plot_usmap(regions = c("counties"),
@@ -105,6 +109,17 @@ plot_state <- function(data, state, feature = c("lila", "la"),
                          data = subset_df,
                          values = feature_plot) +
     colorspace::scale_fill_continuous_sequential(palette = pal) +
+    ggplot2::labs(title = title,
+                  subtitle = subtitle,
+                  caption = caption,
+                  fill = fill_str) +
+    ggplot2::theme(plot.title = ggplot2::element_text(size = 14),
+                   plot.subtitle = ggplot2::element_text(size = 10),
+                   legend.position = "right")
+
+  return(p)
+}
+
     ggplot2::labs(title = title, subtitle = subtitle, caption = caption) +
     ggplot2::theme(plot.title = ggplot2::element_text(size = 14),
                    plot.subtitle = ggplot2::element_text(size = 10),
@@ -120,11 +135,16 @@ is_state_present <- function(df, s) {
 }
 
 is_plottable <- function(data, state, feature) {
+is_plottable <- function(data, state = NULL, feature, detail = c("state_by_county", "us_by_county", "us_by_state")) {
   plottable <- TRUE
 
-  if (!is_valid_state(state)) {
-    # Warning happens in is_valid_state
-    plottable <- FALSE
+  detail <- match.arg(detail)
+
+  if (detail == "state_by_county") {
+    if (!is_valid_state(state)) {
+      # Warning happens in is_valid_state
+      plottable <- FALSE
+    }
   }
 
   if (!is_valid_df(data, feature)) {
@@ -155,6 +175,7 @@ is_valid_df <- function(df, feature) {
     valid_df <- FALSE
   }
 
+  # TODO This needs to be made optional if plotting by country at state level
   # Check for county column
   if (!("county" %in% cols)) {
     warning("Input data frame must have a column named 'county'")
