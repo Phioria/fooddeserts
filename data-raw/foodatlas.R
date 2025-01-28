@@ -19,10 +19,21 @@ if (!file.exists(lcl)) {
   unzip(tmp, exdir = lcl, junkpaths = TRUE)
 }
 
-raw_data <- readr::read_csv(file.path(lcl, atl), na = c("", "NA", "NULL"))
+# After reaching out to the USDA in regards to the meaning of the "NULL"s present in the file,
+# I learned that they can be treated as zeros. They do not represent missing data.
+# readr will pull in most columns as type character due to the "NULL" strings present.
+# Substitute "0" for "NULL" and then convert appropriate columns to numeric.
+# guess_max = Inf necessary to prevent issues with read_csv assuming a column is numeric
+# when only reading the first 1000 lines. In some cases the first "NULL" is after 1000 lines.
+# TODO We could speed this up by telling read_csv what each column should be.
+raw_data <- readr::read_csv(file.path(lcl, atl), na = c("", "NA"), guess_max = Inf)
 
-# Keep only the columns without a significant number of NAs
+# Working with a limited number of features for now
 foodatlas <- raw_data[,1:25]
+
+foodatlas[foodatlas == "NULL"] <- "0"
+foodatlas <- foodatlas %>%
+  dplyr::mutate_at(c(4:ncol(foodatlas)), as.numeric)
 
 # Rename columns for clarity and uniform lowercase
 new_colnames <- c("census_tract", "state", "county", "urban_flag", "pop2010",
@@ -35,6 +46,10 @@ new_colnames <- c("census_tract", "state", "county", "urban_flag", "pop2010",
 
 colnames(foodatlas) <- new_colnames
 
+# Remove Alaska observations until we can convert the old county data to their new counties.
+foodatlas <- foodatlas %>%
+  dplyr::filter(state != "Alaska")
+
 # Convert Connecticut county names to work with usmapdata/usmap
 foodatlas_only_ct <- foodatlas %>%
   dplyr::filter(state == "Connecticut")
@@ -44,6 +59,7 @@ ct_tracts <- foodatlas_only_ct$census_tract
 # Couldn't do a simple name swap.
 # New counties have different shapes encapsulating different census tracts.
 # Iterate through each census tract and change them to the new associated county.
+# The object ct_data was stored in the package via usethis::use_data
 for (tract in ct_tracts) {
   tract_idx <- which(ct_data$census_tract == tract)
   new_county <- ct_data$new_county[tract_idx]
