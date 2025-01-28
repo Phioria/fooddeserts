@@ -3,5 +3,6 @@
 export("%>%")
 export(abb_to_state)
 export(plot_state)
+export(plot_us)
 export(state_to_abb)
 importFrom(magrittr,"%>%")
