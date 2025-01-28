@@ -28,7 +28,7 @@ plot_state <- function(data, state, feature = c("lila", "la"), sensitivity = c("
                        title = NULL, subtitle = NULL, caption = NULL,
                        pal = c("YlOrRd", "Red-Yellow", "BluYl")) {
   # Bind data frame column names that R is complaining about
-  county <- pop2010 <- la_half_10 <- li_la_half_10 <- la_county_pop <- county_pop <- li_la_county_pop <- NULL
+  county <- pop2010 <- county_pop <- .data <- feature_tracts <- county_tracts <- NULL
 
 
   if (missing(data)) stop("Argument `data` is required.")
@@ -107,12 +107,31 @@ plot_state <- function(data, state, feature = c("lila", "la"), sensitivity = c("
     dplyr::mutate(feature_percent = round(feature_tracts / county_tracts, digits = 4) * 100) %>%
     dplyr::mutate(fips = usmap::fips({{ state }}, county))
 
+  #### Setup Palette ####
+  get_bin_range <- function(vals) {
+    low_bin <- ceiling(min(vals / 10))
+    if (low_bin == 0) low_bin <- 1
+    high_bin <- ceiling(max(vals / 10))
+
+    return(c("min" = low_bin, "max" = high_bin))
+  }
+
+  get_palette <- function(low_bin, high_bin, pal) {
+    full_palette <- colorspace::sequential_hcl(n = 10, palette = pal, rev = TRUE)
+
+    return(full_palette[low_bin:high_bin])
+  }
+
+  BINS <- get_bin_range(subset_df$feature_percent)
+
+  COLORS <- get_palette(BINS["min"], BINS["max"], pal)
+
   #### Generate plot ####
   p <- usmap::plot_usmap(regions = c("counties"),
                          include = c(state),
                          data = subset_df,
                          values = feature_plot) +
-    colorspace::scale_fill_continuous_sequential(palette = pal) +
+    ggplot2::scale_fill_gradientn(colors = COLORS) +
     ggplot2::labs(title = title,
                   subtitle = subtitle,
                   caption = caption,
