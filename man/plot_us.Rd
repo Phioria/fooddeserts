@@ -42,7 +42,7 @@ Plot food access across the US
 
 plot_us(data = foodatlas, feature = "la")
 
-plot_us(foodatlas, include_counties = "TRUE", feature = "lila", sensitivity = "Medium",
+plot_us(foodatlas, include_counties = "TRUE", feature = "lila", sensitivity = "medium",
         title = "Share of tracts per state with low income and low access to groceries")
 
 }

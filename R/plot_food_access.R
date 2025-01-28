@@ -167,7 +167,7 @@ plot_state <- function(data, state, feature = c("lila", "la"), sensitivity = c("
 #'
 #' plot_us(data = foodatlas, feature = "la")
 #'
-#' plot_us(foodatlas, include_counties = "TRUE", feature = "lila", sensitivity = "Medium",
+#' plot_us(foodatlas, include_counties = "TRUE", feature = "lila", sensitivity = "medium",
 #'         title = "Share of tracts per state with low income and low access to groceries")
 #'
 plot_us <- function(data, include_counties = FALSE, feature = c("lila", "la"),
@@ -182,8 +182,7 @@ plot_us <- function(data, include_counties = FALSE, feature = c("lila", "la"),
   sensitivity <- match.arg(sensitivity)
 
   if (include_counties) {
-    print("True")
-    # plot_us_by_county()
+    plot_us_by_county(data, feature, sensitivity, title, subtitle, caption, pal)
   } else {
     plot_us_by_state(data, feature, sensitivity, title, subtitle, caption, pal)
   }
@@ -197,6 +196,7 @@ plot_us_by_state <- function(data, feature = c("lila", "la"),
                              sensitivity = c("low", "medium", "high"),
                              title = NULL, subtitle = NULL, caption = NULL,
                              pal = c("YlOrRd", "Red-Yellow", "BluYl")) {
+  state <- .data <- feature_tracts <- state_tracts <- NULL
 
   if (missing(data)) stop("Argument `data` is required.")
 
@@ -296,6 +296,147 @@ plot_us_by_state <- function(data, feature = c("lila", "la"),
 
   return(p)
 }
+
+
+
+
+
+
+
+
+
+
+## COUNTY
+
+plot_us_by_county <- function(data, feature = c("lila", "la"),
+                              sensitivity = c("low", "medium", "high"),
+                              title = NULL, subtitle = NULL, caption = NULL,
+                              pal = c("YlOrRd", "Red-Yellow", "BluYl")) {
+  state <- county <- .data <- feature_tracts <- state_tracts <- NULL
+
+  if (missing(data)) stop("Argument `data` is required.")
+
+  feature <- match.arg(feature)
+
+  sensitivity <- match.arg(sensitivity)
+
+  sensitivity <- switch(sensitivity,
+                        "low" = 1,
+                        "medium" = 2,
+                        "high" = 3)
+
+  # Least to most sensitive
+  lila_vals <- c("li_la_1_20", "li_la_1_10", "li_la_half_10")
+  la_vals <- c("la_1_20", "la_1_10", "la_half_10")
+
+  feature_val <- switch(feature,
+                        "lila" = lila_vals[sensitivity],
+                        "la" = la_vals[sensitivity])
+
+  feature_plot <- "feature_percent"
+
+  pal <- match.arg(pal)
+
+  if (!is_plottable(data, state = NULL, feature_val, detail = "us_by_county")) {
+    warning("Could not generate this plot. See warnings.")
+    return(NULL)
+  }
+
+  #### Generate plot text ####
+  # Set title to default if not provided
+  if (is.null(title)) {
+    title_pre <- paste("Share of tracts per county per state with")
+    title_mid <- switch(feature,
+                        "la" = "low access",
+                        "lila" = "low income and low access")
+    title_suf <- "to groceries"
+    title <- paste(title_pre, title_mid, title_suf)
+  } else {
+    stopifnot("`title` must be of type character or left blank." = is.character(title))
+  }
+
+  # Set subtitle to default if not provided
+  if (is.null(subtitle)) {
+    subtitle <- "2015 - 2019"
+  } else {
+    stopifnot("`subtitle` must be of type character or left blank." = is.character(subtitle))
+  }
+
+  # Set caption to default if not provided
+  if (is.null(caption)) {
+    caption <- "Data from: https://catalog.data.gov/dataset/food-access-research-atlas"
+  } else {
+    stopifnot("`caption` must be of type character or left blank." = is.character(caption))
+  }
+
+  fill_str <- "Share of Tracts"
+
+  #### Summarize data ####
+  subset_df <- data %>%
+    dplyr::group_by(state, county) %>%
+    dplyr::summarize(state_tracts = dplyr::n(),
+                     feature_tracts = sum(.data[[feature_val]])) %>%
+    dplyr::mutate(feature_percent = round(feature_tracts / state_tracts, digits = 4) * 100)
+  #dplyr::mutate(fips = usmap::fips({{ state }}, county))
+
+
+  us_fips <- vector()
+
+  for (s in unique(subset_df$state)) {
+    state_df <- subset_df %>%
+      dplyr::filter(state == s)
+    state_counties <- state_df$county
+    state_fips <- usmap::fips(s, state_counties)
+    us_fips <- append(us_fips, state_fips)
+  }
+
+  subset_df <- subset_df %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(fips = us_fips)
+
+  #### Setup Palette ####
+  get_bin_range <- function(vals) {
+    low_bin <- ceiling(min(vals / 10))
+    if (low_bin == 0) low_bin <- 1
+    high_bin <- ceiling(max(vals / 10))
+
+    return(c("min" = low_bin, "max" = high_bin))
+  }
+
+  get_palette <- function(low_bin, high_bin, pal) {
+    full_palette <- colorspace::sequential_hcl(n = 10, palette = pal, rev = TRUE)
+
+    return(full_palette[low_bin:high_bin])
+  }
+
+  BINS <- get_bin_range(subset_df$feature_percent)
+
+  COLORS <- get_palette(BINS["min"], BINS["max"], pal)
+
+  #### Generate plot ####
+  p <- usmap::plot_usmap(data = subset_df,
+                         regions = c("counties"),
+                         values = feature_plot) +
+    ggplot2::scale_fill_gradientn(colors = COLORS) +
+    ggplot2::labs(title = title,
+                  subtitle = subtitle,
+                  caption = caption,
+                  fill = fill_str) +
+    ggplot2::theme(plot.title = ggplot2::element_text(size = 14),
+                   plot.subtitle = ggplot2::element_text(size = 10),
+                   legend.position = "right")
+
+  return(p)
+}
+
+
+
+
+
+
+
+
+
 
 
 
